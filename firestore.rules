@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidAnalysis(data) {
+      return data.keys().hasAll(['totalPosts', 'positive', 'negative', 'neutral', 'userId', 'createdAt']) &&
+        data.totalPosts is number && data.totalPosts >= 0 &&
+        data.positive is number && data.positive >= 0 &&
+        data.negative is number && data.negative >= 0 &&
+        data.neutral is number && data.neutral >= 0 &&
+        data.positive + data.negative + data.neutral == data.totalPosts &&
+        data.userId is string && data.userId.size() <= 128 && data.userId == request.auth.uid &&
+        data.createdAt is string && data.createdAt.size() <= 100 &&
+        (!('datasetName' in data) || (data.datasetName is string && data.datasetName.size() <= 200)) &&
+        (!('userEmail' in data) || (data.userEmail is string && data.userEmail.size() <= 200)) &&
+        (!('topKeywords' in data) || (data.topKeywords is list && data.topKeywords.size() <= 100));
+    }
+
+    match /analyses/{analysisId} {
+      allow get: if isSignedIn() && (existing().userId == request.auth.uid);
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && isValidId(analysisId) && isValidAnalysis(incoming());
+      allow update: if isSignedIn() && isValidId(analysisId) && existing().userId == request.auth.uid && isValidAnalysis(incoming()) && incoming().userId == existing().userId;
+      allow delete: if isSignedIn() && isValidId(analysisId) && existing().userId == request.auth.uid;
+    }
+  }
+}

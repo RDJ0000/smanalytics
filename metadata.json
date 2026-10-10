@@ -1,0 +1,6 @@
+{
+  "name": "Social Media Analytics — White Walkers",
+  "description": "Social media sentiment analysis and keyword analytics dashboard with CSV dataset upload and Firebase Firestore persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

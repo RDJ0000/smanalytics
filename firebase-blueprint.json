@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "Analysis": {
+      "title": "Analysis",
+      "description": "Saved social media sentiment analysis summary document",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "datasetName": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "totalPosts": {
+          "type": "number"
+        },
+        "positive": {
+          "type": "number"
+        },
+        "negative": {
+          "type": "number"
+        },
+        "neutral": {
+          "type": "number"
+        },
+        "userId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "userEmail": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["totalPosts", "positive", "negative", "neutral", "userId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/analyses/{analysisId}": {
+      "schema": "Analysis",
+      "description": "Social media sentiment analysis summaries saved by users"
+    }
+  }
+}

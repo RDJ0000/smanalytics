@@ -1,0 +1,6 @@
+# Social Media Analytics — Team White Walkers
+# The core analyzer and app run with Python Standard Library (3.8+)
+# Optional packages for expanded capabilities:
+Flask>=3.0.0
+requests>=2.31.0
+pytest>=8.0.0
